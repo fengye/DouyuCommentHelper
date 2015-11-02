@@ -1,4 +1,23 @@
+String.prototype.hexEncode = function(){
+    var hex, i;
+
+    var result = "";
+    for (i=0; i<this.length; i++) {
+        hex = this.charCodeAt(i).toString(16);
+        result += "0x" + ("000"+hex).slice(-4) + " ";
+    }
+
+    return result
+}
+
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+function preprocess_string(s)
+{
+  s = s.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
+  s = s.replace(/[\s\'\"\:\,]*/g, "");
+  return s;
+}
 
 var observer = new MutationObserver(function(mutations, observer) {
     // fired when a mutation occurs
@@ -9,7 +28,85 @@ var observer = new MutationObserver(function(mutations, observer) {
           for(i = 0; i < mutation.addedNodes.length; ++i)
           {
             var item = mutation.addedNodes.item(i);
-            if (item.className == 'text_cont')
+
+            // check for gift
+            if (item.className == 'jschartli new_bs_li' || item.className == 'jschartli')
+            {
+              // first check if the comments needs to be read out,
+              // i.e. class==lw_imgs
+              var found = true;
+              var j;
+              for (j = 0; j < item.childElementCount; ++j)
+              {
+                var child = item.children.item(j);
+                if (child.childElementCount > 0)
+                {
+                  var k;
+                  for(k = 0; k < child.childElementCount; ++k)
+                  {
+                    var grandChild = child.children.item(k);
+                    if (grandChild.nodeName == 'IMG' && grandChild.className == 'lw_imgs')
+                    {
+                      found = true;
+                      //console.log("FOUND!!!");
+                    }
+                    if (grandChild.nodeName == 'IMG' && grandChild.src.indexOf('yw.png') >= 0)
+                    {
+                      found = true;
+                      // console.log("FOUND type 2!!!");
+                    }
+                  }
+                }
+
+              }
+
+              if (found)
+              {
+                var speaker;
+                var j;
+                // find speaker name
+                for (j = 0; j < item.childElementCount; ++j)
+                {
+                  var child = item.children.item(j);
+
+                  var k;
+                  for(k = 0; k < child.childElementCount; ++k)
+                  {
+                    var grandChild = child.children.item(k);
+                    if (grandChild.className == 'nick js_nick')
+                    {
+                      speaker = grandChild.textContent;
+                    }
+                  }
+                }
+
+                // find speaking content
+                var textContent = preprocess_string(item.textContent);
+
+                if (textContent.length != 0)
+                {
+                  console.log(textContent);
+                  // if (textContent.indexOf('来到本直播间') < 0 &&
+                  if (textContent.indexOf('次在线领鱼丸时') < 0)
+                  //     textContent.indexOf('次在线领鱼丸时') < 0 &&
+                  //     textContent.indexOf('高级酬勤') < 0 &&
+                  //     textContent.indexOf('系统广播') < 0)
+                  {
+
+                    speaker = speaker || " ";
+                    textContent = textContent || " ";
+                    chrome.runtime.sendMessage({name: speaker, content: textContent, gift: true}, function(response) {
+                      console.log(response);
+                    });
+                  }
+                }
+
+
+              }
+            }
+
+            // normal and vip user
+            if (item.className == 'text_cont' || item.className == 'text_cont cqback')
             {
               // find childs with class=name and class=text_cont
               for (j = 0; j < item.childElementCount; ++j)
@@ -32,12 +129,15 @@ var observer = new MutationObserver(function(mutations, observer) {
                 }
                 else if (child.className == 'text_cont')
                 {
-                  console.log(child.textContent);
+                  var textContent = preprocess_string(child.textContent);
+                  console.log(textContent);
                   // prevent reading emoji, which cause tts bugs
-                  if (child.textContent.length != 0)
+                  if (textContent.length != 0)
                   {
+                    speaker = speaker || " ";
+                    textContent = textContent || " ";
 
-                    chrome.runtime.sendMessage({name: speaker, content: child.textContent}, function(response) {
+                    chrome.runtime.sendMessage({name: speaker, content: textContent, gift: false}, function(response) {
                       console.log(response);
                     });
                   }
@@ -67,12 +167,16 @@ var observer = new MutationObserver(function(mutations, observer) {
                 }
                 else if (child.className == 'm')
                 {
-                  console.log(child.textContent);
+                  var textContent = preprocess_string(child.textContent);
+                  console.log(textContent);
 
                   // prevent reading emoji, which cause tts bugs
-                  if (child.textContent.length != 0)
+                  if (textContent.length != 0)
                   {
-                    chrome.runtime.sendMessage({name: speaker, content: child.textContent}, function(response) {
+                    speaker = speaker || " ";
+                    textContent = textContent || " ";
+
+                    chrome.runtime.sendMessage({name: speaker, content: textContent, gift: false}, function(response) {
                       console.log(response);
                     });
                   }

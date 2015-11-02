@@ -14,15 +14,32 @@
 <div>
 </div>
 <label>
-  <input type="checkbox" id="not_enqueue">
-  语音无缓存播放
+  <input type="radio" name='buffer_mode' id="enqueue">全读模式
+  <br>
+  <input type="radio" name='buffer_mode' id="not_enqueue" checked>随缘模式
+  <!-- <input type="checkbox" id="not_enqueue">
+  是否随缘模式 -->
 </label>
 
 <div>
 </div>
 <label>
   <input type="checkbox" id="read_name">
-  播放弹幕用户名
+  播放弹幕时含用户名
+</label>
+<div>
+</div>
+
+<label>
+  <input type="checkbox" id="read_normal_comments">
+  读普通弹幕
+</label>
+<div>
+</div>
+
+<label>
+  <input type="checkbox" id="read_gift_comments">
+  读礼物消息
 </label>
 
 <div id="status"></div>

@@ -11,11 +11,16 @@ function save_options() {
 
       var not_enqueue = document.getElementById('not_enqueue').checked;
       var read_name = document.getElementById('read_name').checked;
+      var read_normal_comments = document.getElementById('read_normal_comments').checked;
+      var read_gift_comments = document.getElementById('read_gift_comments').checked;
+
       chrome.storage.sync.set({
         tts_engine_lang: tts_engine_lang,
         tts_engine_gender: tts_engine_gender,
         not_enqueue: not_enqueue,
-        read_name: read_name
+        read_name: read_name,
+        read_normal_comments: read_normal_comments,
+        read_gift_comments: read_gift_comments
       }, function() {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
@@ -29,7 +34,9 @@ function save_options() {
             tts_engine_lang: tts_engine_lang,
             tts_engine_gender: tts_engine_gender,
             not_enqueue: not_enqueue,
-            read_name: read_name
+            read_name: read_name,
+            read_normal_comments: read_normal_comments,
+            read_gift_comments: read_gift_comments
           },
           function(response) {
 
@@ -73,8 +80,10 @@ function restore_options() {
     {
       tts_engine_lang: 'zh-CN',
       tts_engine_gender: 'female',
-      not_enqueue: false,
-      read_name: false
+      not_enqueue: true,
+      read_name: false,
+      read_normal_comments: true,
+      read_gift_comments: true
     },
     function(items) {
     chrome.tts.getVoices(
@@ -91,7 +100,11 @@ function restore_options() {
             });
 
     document.getElementById('not_enqueue').checked = items.not_enqueue;
+    document.getElementById('enqueue').checked = !items.not_enqueue;
+
     document.getElementById('read_name').checked = items.read_name;
+    document.getElementById('read_normal_comments').checked = items.read_normal_comments;
+    document.getElementById('read_gift_comments').checked = items.read_gift_comments;
     }
   );
 }
