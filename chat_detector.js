@@ -1,13 +1,14 @@
-String.prototype.hexEncode = function(){
-    var hex, i;
+function stringHexEncode(s)
+{
+  var hex, i;
 
-    var result = "";
-    for (i=0; i<this.length; i++) {
-        hex = this.charCodeAt(i).toString(16);
-        result += "0x" + ("000"+hex).slice(-4) + " ";
-    }
+  var result = "";
+  for (i=0; i<s.length; i++) {
+      hex = s.charCodeAt(i).toString(16);
+      result += "0x" + ("000"+hex).slice(-4) + " ";
+  }
 
-    return result
+  return result
 }
 
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
@@ -87,10 +88,10 @@ var observer = new MutationObserver(function(mutations, observer) {
                 {
                   console.log(textContent);
                   // if (textContent.indexOf('来到本直播间') < 0 &&
-                  if (textContent.indexOf('次在线领鱼丸时') < 0)
+                  if (textContent.indexOf('次在线领鱼丸时') < 0 &&
                   //     textContent.indexOf('次在线领鱼丸时') < 0 &&
                   //     textContent.indexOf('高级酬勤') < 0 &&
-                  //     textContent.indexOf('系统广播') < 0)
+                      textContent.indexOf('系统广播') < 0)
                   {
 
                     speaker = speaker || " ";
