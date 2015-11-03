@@ -23,6 +23,7 @@ var read_gift_comments = true;
 
 ////////////////////////////
 var last_gift_combo_username = "";
+var user_activity_table = new Array();
 
 chrome.storage.sync.get(
   {
@@ -43,6 +44,48 @@ chrome.storage.sync.get(
     read_gift_comments = items.read_gift_comments;
   }
 );
+
+function update_user_activity()
+{
+  var currentTime = new Date().getTime() / 1000;
+  var userToBeRemoved = [];
+
+  for (var key in user_activity_table)
+  {
+    if(currentTime - user_activity_table[key] >= 15)
+    {
+      userToBeRemoved.push(key);
+    }
+  }
+
+  for(var i = 0; i < userToBeRemoved.length; ++i)
+  {
+    delete user_activity_table[userToBeRemoved[i]];
+  }
+
+  // debug
+  // console.log('===========');
+  // for (var key in user_activity_table)
+  // {
+  //   console.log(key);
+  // }
+  // console.log('===========');
+}
+
+function chlog_user_too_frequent(username)
+{
+  var currentTime = new Date().getTime() / 1000;
+  for (var key in user_activity_table)
+  {
+    if (key == username)
+    {
+      return true;
+    }
+  }
+
+  user_activity_table[username] = currentTime;
+  return false;
+}
 
 function preprocess_string(s)
 {
@@ -80,19 +123,11 @@ function check_big_combo(combo_sentence)
   var re = /(\d+)\s*(连击)\s*/;
   var result = re.exec(combo_sentence);
   var comboCount = parseInt(result[1]);
-  if (comboCount == 3 ||
-      comboCount == 5 ||
+  if (comboCount == 5 ||
       comboCount == 10 ||
       comboCount == 20 ||
-      comboCount == 30 ||
-      comboCount == 40 ||
       comboCount == 50 ||
-      comboCount == 60 ||
-      comboCount == 70 ||
-      comboCount == 80 ||
-      comboCount == 90 ||
       comboCount == 100 ||
-      comboCount == 150 ||
       comboCount == 200 ||
       comboCount == 500 ||
       comboCount == 1000 ||
@@ -157,6 +192,8 @@ chrome.runtime.onMessage.addListener(
     // console.log(sender);
     if (sender.tab)
     {
+      update_user_activity();
+
       if (request.name && request.content)
       {
         var sentence;
@@ -169,10 +206,10 @@ chrome.runtime.onMessage.addListener(
             var remaining = gift_sentence[1];
             var combo = gift_sentence[2];
 
-            //if (last_gift_combo_username != username || check_big_combo(combo))
-            if (check_big_combo(combo))
+            if (!chlog_user_too_frequent(username))
+            //if (last_gift_combo_username != username)
             {
-              last_gift_combo_username = username;
+
               if (combo)
               {
                 sentence = username + remaining + combo;
@@ -181,12 +218,31 @@ chrome.runtime.onMessage.addListener(
               {
                 sentence = username + remaining;
               }
+
+              // last_gift_combo_username = username;
             }
-            else if (!combo)
+            else if (check_big_combo(combo))
             {
-              // single gift always reads out
-              sentence = username + remaining;
+              if (last_gift_combo_username == username)
+              {
+                sentence = combo;
+              }
+              else
+              {
+                sentence = username + remaining + combo;
+              }
+
+              last_gift_combo_username = username;
             }
+            // sometimes douyu won't says it's combo, but we needs to be conservative
+            // about speech
+            // else if (!combo && last_gift_combo_username != username)
+            // {
+            //   last_gift_combo_username = username;
+            //
+            //   // single gift always reads out
+            //   sentence = username + remaining;
+            // }
             else {
               console.log('CANCEL READ');
             }
