@@ -20,6 +20,38 @@ var fix_symbol_reading = true;
 var fix_special_chinese_reading = true;
 var read_normal_comments = true;
 var read_gift_comments = true;
+var limit_comment_length = true;
+var comment_length = 15;
+var comment_length_complain = false;
+var censorship_word_list = new Array();
+var censorship_complain = false;
+
+var too_long_complain_words = [
+  '人家不要再读了',
+  '讨厌，太常了',
+  '好泪啦',
+  '话儿为什么这么常',
+  '太常了啦'
+];
+
+var censorship_complain_words = [
+  '好脏，不想读',
+  '好污，不想读',
+  '讨厌，不想读',
+  '好变态，不读了',
+  '我还是个孩子',
+  '都说了不读了'
+];
+
+function get_too_long_complain_word()
+{
+  return too_long_complain_words[Math.floor(Math.random() * too_long_complain_words.length)];
+}
+
+function get_censorship_complain_word()
+{
+  return censorship_complain_words[Math.floor(Math.random() * censorship_complain_words.length)];
+}
 
 ////////////////////////////
 var last_gift_combo_username = "";
@@ -257,6 +289,43 @@ chrome.runtime.onMessage.addListener(
           else {
             sentence = mangle_content(request.content);
           }
+
+          // check length
+          if (limit_comment_length)
+          {
+            if (sentence.length > comment_length)
+            {
+              if (comment_length_complain)
+              {
+                sentence = get_too_long_complain_word();
+              }
+              else {
+                sentence = undefined;
+              }
+            }
+          }
+
+          console.log(censorship_word_list);
+          // check censorship
+          if (censorship_word_list.length > 0)
+          {
+            console.log(censorship_word_list.join("|"));
+
+            var censorshipRE = new RegExp(censorship_word_list.join("|"), 'gi');
+            var censored = censorshipRE.exec(sentence);
+            if (censored)
+            {
+              if (censorship_complain)
+              {
+                console.log("CENSORED REPLACED");
+                sentence = get_censorship_complain_word();
+              }
+              else {
+                console.log("CENSORED");
+                sentence = undefined;
+              }
+            }
+          }
         }
 
         chrome.tts.isSpeaking(function(isSpeaking){
@@ -326,6 +395,19 @@ chrome.runtime.onMessage.addListener(
         read_name = request.read_name;
         read_normal_comments = request.read_normal_comments;
         read_gift_comments = request.read_gift_comments;
+
+        limit_comment_length = request.limit_comment_length;
+        comment_length = request.comment_length;
+        comment_length_complain = request.comment_length_complain;
+        if (request.censorship_words)
+        {
+          if (request.censorship_words != '')
+            censorship_word_list = request.censorship_words.split(' ');
+        }
+
+        console.log(request.censorship_words);
+
+        censorship_complain = request.censorship_complain;
       }
     }
     else {
@@ -336,7 +418,17 @@ chrome.runtime.onMessage.addListener(
       read_normal_comments = request.read_normal_comments;
       read_gift_comments = request.read_gift_comments;
 
-    }
+      limit_comment_length = request.limit_comment_length;
+      comment_length = request.comment_length;
+      comment_length_complain = request.comment_length_complain;
+      if (request.censorship_words)
+      {
+        if (request.censorship_words != '')
+          censorship_word_list = request.censorship_words.split(' ');
+      }
 
+      console.log(request.censorship_words);
+      censorship_complain = request.censorship_complain;
+    }
 
   });

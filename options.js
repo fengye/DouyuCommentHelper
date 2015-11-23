@@ -13,6 +13,11 @@ function save_options() {
       var read_name = document.getElementById('read_name').checked;
       var read_normal_comments = document.getElementById('read_normal_comments').checked;
       var read_gift_comments = document.getElementById('read_gift_comments').checked;
+      var limit_comment_length = document.getElementById('comment_length_limit').checked;
+      var comment_length = parseInt(document.getElementById('comment_length_limit_count').value) || 0;
+      var comment_length_complain = document.getElementById('comment_length_limit_complain').checked;
+      var censorship_words = document.getElementById('censorship_keyword').value.trim();
+      var censorship_complain = document.getElementById('censorship_complain').checked;
 
       chrome.storage.sync.set({
         tts_engine_lang: tts_engine_lang,
@@ -20,7 +25,13 @@ function save_options() {
         not_enqueue: not_enqueue,
         read_name: read_name,
         read_normal_comments: read_normal_comments,
-        read_gift_comments: read_gift_comments
+        read_gift_comments: read_gift_comments,
+        limit_comment_length: limit_comment_length,
+        comment_length: comment_length,
+        comment_length_complain: comment_length_complain,
+        censorship_words: censorship_words,
+        censorship_complain: censorship_complain
+
       }, function() {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
@@ -36,7 +47,12 @@ function save_options() {
             not_enqueue: not_enqueue,
             read_name: read_name,
             read_normal_comments: read_normal_comments,
-            read_gift_comments: read_gift_comments
+            read_gift_comments: read_gift_comments,
+            limit_comment_length: limit_comment_length,
+            comment_length: comment_length,
+            comment_length_complain: comment_length_complain,
+            censorship_words: censorship_words,
+            censorship_complain: censorship_complain
           },
           function(response) {
 
@@ -83,7 +99,12 @@ function restore_options() {
       not_enqueue: true,
       read_name: false,
       read_normal_comments: true,
-      read_gift_comments: true
+      read_gift_comments: true,
+      limit_comment_length: true,
+      comment_length: '15',
+      comment_length_complain: false,
+      censorship_words: '',
+      censorship_complain: false
     },
     function(items) {
     chrome.tts.getVoices(
@@ -105,6 +126,13 @@ function restore_options() {
     document.getElementById('read_name').checked = items.read_name;
     document.getElementById('read_normal_comments').checked = items.read_normal_comments;
     document.getElementById('read_gift_comments').checked = items.read_gift_comments;
+
+    document.getElementById('comment_length_limit').checked = items.limit_comment_length;
+    document.getElementById('comment_length_limit_count').value = String(items.comment_length);
+    document.getElementById('comment_length_limit_complain').checked = items.comment_length_complain;
+    document.getElementById('censorship_keyword').innerHTML = items.censorship_words;
+    document.getElementById('censorship_complain').checked = items.censorship_complain;
+
     }
   );
 }

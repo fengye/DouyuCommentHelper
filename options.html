@@ -37,10 +37,34 @@
 <div>
 </div>
 
+
 <label>
   <input type="checkbox" id="read_gift_comments">
   读礼物消息
 </label>
+
+<div>
+  <label>
+    <input type="checkbox" id="comment_length_limit"/>
+    限制每条弹幕长度
+    <input type="text" id="comment_length_limit_count"/>
+
+    <input type="checkbox" id="comment_length_limit_complain"/>
+    太长就卖萌
+  </label>
+</div>
+
+<div>
+  <label>
+    屏蔽关键字（空格分隔）
+    <br/>
+    <textarea id="censorship_keyword" cols="40" rows="5" ></textarea>
+
+    <input type="checkbox" id="censorship_complain"/>
+    太脏就卖萌
+  </label>
+</div>
+
 
 <div id="status"></div>
 <button id="save">保存</button>
