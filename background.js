@@ -64,7 +64,13 @@ chrome.storage.sync.get(
     not_enqueue: not_enqueue,
     read_name: read_name,
     read_normal_comments: read_normal_comments,
-    read_gift_comments: read_gift_comments
+    read_gift_comments: read_gift_comments,
+    limit_comment_length: limit_comment_length,
+    comment_length: comment_length,
+    comment_length_complain: comment_length_complain,
+    censorship_words: '',
+    censorship_complain: censorship_complain
+
   },
   function(items) {
 
@@ -74,6 +80,11 @@ chrome.storage.sync.get(
     read_name = items.read_name;
     read_normal_comments = items.read_normal_comments;
     read_gift_comments = items.read_gift_comments;
+    limit_comment_length = items.limit_comment_length;
+    comment_length = items.comment_length;
+    comment_length_complain = items.comment_length_complain;
+    censorship_word_list = items.censorship_words.split(/\s+/);
+    censorship_complain = censorship_complain
   }
 );
 
@@ -277,6 +288,7 @@ chrome.runtime.onMessage.addListener(
             // }
             else {
               console.log('CANCEL READ');
+              sentence = ' ';
             }
 
         }
@@ -300,7 +312,7 @@ chrome.runtime.onMessage.addListener(
                 sentence = get_too_long_complain_word();
               }
               else {
-                sentence = undefined;
+                sentence = ' ';
               }
             }
           }
@@ -322,7 +334,7 @@ chrome.runtime.onMessage.addListener(
               }
               else {
                 console.log("CENSORED");
-                sentence = undefined;
+                sentence = ' ';
               }
             }
           }
@@ -402,10 +414,10 @@ chrome.runtime.onMessage.addListener(
         if (request.censorship_words)
         {
           if (request.censorship_words != '')
-            censorship_word_list = request.censorship_words.split(' ');
+            censorship_word_list = request.censorship_words.split(/\s+/);
         }
 
-        console.log(request.censorship_words);
+        // console.log(request.censorship_words);
 
         censorship_complain = request.censorship_complain;
       }
@@ -424,10 +436,10 @@ chrome.runtime.onMessage.addListener(
       if (request.censorship_words)
       {
         if (request.censorship_words != '')
-          censorship_word_list = request.censorship_words.split(' ');
+          censorship_word_list = request.censorship_words.split(/\s+/);
       }
 
-      console.log(request.censorship_words);
+      // console.log(request.censorship_words);
       censorship_complain = request.censorship_complain;
     }
 
