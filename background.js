@@ -83,7 +83,10 @@ chrome.storage.sync.get(
     limit_comment_length = items.limit_comment_length;
     comment_length = items.comment_length;
     comment_length_complain = items.comment_length_complain;
-    censorship_word_list = items.censorship_words.split(/\s+/);
+    if (items.censorship_words != '')
+    {
+      censorship_word_list = items.censorship_words.split(/\s+/);
+    }
     censorship_complain = censorship_complain
   }
 );
