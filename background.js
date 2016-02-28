@@ -354,6 +354,7 @@ chrome.runtime.onMessage.addListener(
                 console.log(sentence);
                 console.log(sentence.hexEncode());
                 chrome.tts.speak(sentence, {'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': true});
+                console.log(tts_engine_lang);
                 sendResponse({read: sentence});
               }
             }
@@ -367,6 +368,7 @@ chrome.runtime.onMessage.addListener(
                   console.log(sentence.hexEncode());
 
                   chrome.tts.speak(sentence, {'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': !not_enqueue});
+                  console.log(tts_engine_lang);
                   sendResponse({read: sentence});
                 }
               }
@@ -386,6 +388,7 @@ chrome.runtime.onMessage.addListener(
                 console.log(sentence.hexEncode());
 
                 chrome.tts.speak(sentence, {'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': true});
+                console.log(tts_engine_lang);
                 sendResponse({read: sentence});
               }
             }
@@ -396,6 +399,7 @@ chrome.runtime.onMessage.addListener(
                 console.log(sentence.hexEncode());
 
                 chrome.tts.speak(sentence, {'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': !not_enqueue});
+                console.log(tts_engine_lang);
                 sendResponse({read: sentence});
               }
             }
