@@ -13,6 +13,7 @@ String.prototype.hexEncode = function(){
 
 var tts_engine_lang = 'zh-CN';
 var tts_engine_gender = 'female';
+var tts_engine_voice = 'Google 普通话（中国大陆）';
 var not_enqueue = false;
 var read_name = false;
 var fix_number_reading = true;
@@ -61,6 +62,7 @@ chrome.storage.sync.get(
   {
     tts_engine_lang: tts_engine_lang,
     tts_engine_gender: tts_engine_gender,
+    tts_engine_voice: tts_engine_voice,
     not_enqueue: not_enqueue,
     read_name: read_name,
     read_normal_comments: read_normal_comments,
@@ -76,6 +78,7 @@ chrome.storage.sync.get(
 
     tts_engine_lang = items.tts_engine_lang;
     tts_engine_gender = items.tts_engine_gender;
+    tts_engine_voice = items.tts_engine_voice;
     not_enqueue = items.not_enqueue;
     read_name = items.read_name;
     read_normal_comments = items.read_normal_comments;
@@ -353,8 +356,10 @@ chrome.runtime.onMessage.addListener(
               {
                 console.log(sentence);
                 console.log(sentence.hexEncode());
-                chrome.tts.speak(sentence, {'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': true});
+                chrome.tts.speak(sentence, {'voiceName': tts_engine_voice,'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': true});
+                console.log(tts_engine_voice);
                 console.log(tts_engine_lang);
+                console.log(tts_engine_gender);
                 sendResponse({read: sentence});
               }
             }
@@ -367,8 +372,10 @@ chrome.runtime.onMessage.addListener(
                   console.log(sentence);
                   console.log(sentence.hexEncode());
 
-                  chrome.tts.speak(sentence, {'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': !not_enqueue});
+                  chrome.tts.speak(sentence, {'voiceName': tts_engine_voice,'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': !not_enqueue});
+                  console.log(tts_engine_voice);
                   console.log(tts_engine_lang);
+                  console.log(tts_engine_gender);
                   sendResponse({read: sentence});
                 }
               }
@@ -387,8 +394,10 @@ chrome.runtime.onMessage.addListener(
                 console.log(sentence);
                 console.log(sentence.hexEncode());
 
-                chrome.tts.speak(sentence, {'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': true});
+                chrome.tts.speak(sentence, {'voiceName': tts_engine_voice,'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': true});
+                console.log(tts_engine_voice);
                 console.log(tts_engine_lang);
+                console.log(tts_engine_gender);
                 sendResponse({read: sentence});
               }
             }
@@ -398,8 +407,10 @@ chrome.runtime.onMessage.addListener(
                 console.log(sentence);
                 console.log(sentence.hexEncode());
 
-                chrome.tts.speak(sentence, {'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': !not_enqueue});
+                chrome.tts.speak(sentence, {'voiceName': tts_engine_voice,'lang': tts_engine_lang, 'gender': tts_engine_gender, 'rate': 1.0, 'enqueue': !not_enqueue});
+                console.log(tts_engine_voice);
                 console.log(tts_engine_lang);
+                console.log(tts_engine_gender);
                 sendResponse({read: sentence});
               }
             }
@@ -410,6 +421,7 @@ chrome.runtime.onMessage.addListener(
       else {
         tts_engine_lang = request.tts_engine_lang;
         tts_engine_gender = request.tts_engine_gender;
+        tts_engine_voice = request.tts_engine_voice;
         not_enqueue = request.not_enqueue;
         read_name = request.read_name;
         read_normal_comments = request.read_normal_comments;
@@ -432,6 +444,7 @@ chrome.runtime.onMessage.addListener(
     else {
       tts_engine_lang = request.tts_engine_lang;
       tts_engine_gender = request.tts_engine_gender;
+      tts_engine_voice = request.tts_engine_voice;
       not_enqueue = request.not_enqueue;
       read_name = request.read_name;
       read_normal_comments = request.read_normal_comments;

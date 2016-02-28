@@ -1,6 +1,9 @@
 // Saves options to chrome.storage
 function save_options() {
+
   var tts_engine_value = document.getElementById('tts_engine').value;
+  var tts_engine = document.getElementById('tts_engine');
+  var tts_engine_voice = tts_engine.options[tts_engine.selectedIndex].text;
 
   chrome.tts.getVoices(
     function(voices)
@@ -8,6 +11,8 @@ function save_options() {
       var tts_engine_array = tts_engine_value.split('#');
       var tts_engine_lang = tts_engine_array[0];
       var tts_engine_gender = tts_engine_array[1];
+
+      console.log(tts_engine_voice);
 
       var not_enqueue = document.getElementById('not_enqueue').checked;
       var read_name = document.getElementById('read_name').checked;
@@ -22,6 +27,7 @@ function save_options() {
       chrome.storage.sync.set({
         tts_engine_lang: tts_engine_lang,
         tts_engine_gender: tts_engine_gender,
+        tts_engine_voice: tts_engine_voice,
         not_enqueue: not_enqueue,
         read_name: read_name,
         read_normal_comments: read_normal_comments,
@@ -40,10 +46,13 @@ function save_options() {
           status.textContent = '';
         }, 750);
 
+        console.log(tts_engine_voice);
+
         // pass to background page
         chrome.runtime.sendMessage({
             tts_engine_lang: tts_engine_lang,
             tts_engine_gender: tts_engine_gender,
+            tts_engine_voice: tts_engine_voice,
             not_enqueue: not_enqueue,
             read_name: read_name,
             read_normal_comments: read_normal_comments,
@@ -96,6 +105,7 @@ function restore_options() {
     {
       tts_engine_lang: 'zh-CN',
       tts_engine_gender: 'female',
+      tts_engine_voice: 'Google 普通话（中国大陆）',
       not_enqueue: true,
       read_name: false,
       read_normal_comments: true,
