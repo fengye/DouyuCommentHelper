@@ -106,45 +106,54 @@ var observer = new MutationObserver(function(mutations, observer) {
               }
             }
 
-            // normal and vip user
-            if (item.className == 'text_cont' || item.className == 'text_cont cqback')
+            if (item.className == 'jschartli chartli')
             {
-              // find childs with class=name and class=text_cont
-              for (j = 0; j < item.childElementCount; ++j)
+              for(ii = 0; ii < item.childElementCount; ++ii)
               {
-                var speaker;
-
-                var child = item.children.item(j);
-                if (child.className == 'name')
+                var item_ii = item.children.item(ii);
+                
+                // normal and vip user
+                if (item_ii.className == 'text_cont' || item_ii.className == 'text_cont cqback')
                 {
-                  for (k = 0; k < child.childElementCount; ++k)
+                  // find childs with class=name and class=text_cont
+                  for (j = 0; j < item_ii.childElementCount; ++j)
                   {
-                    var grandChild = child.children.item(k);
-                    if (grandChild.className == 'nick js_nick')
+                    var speaker;
+
+                    var child = item_ii.children.item(j);
+                    if (child.className == 'name')
                     {
-                      // omit the last semi colon
-                      speaker = grandChild.textContent;
-                      speaker = speaker.substring(0, speaker.length-1);
+                      for (k = 0; k < child.childElementCount; ++k)
+                      {
+                        var grandChild = child.children.item(k);
+                        if (grandChild.className == 'nick js_nick')
+                        {
+                          // omit the last semi colon
+                          speaker = grandChild.textContent;
+                          speaker = speaker.substring(0, speaker.length-1);
+                        }
+                      }
                     }
-                  }
-                }
-                else if (child.className == 'text_cont')
-                {
-                  var textContent = preprocess_string(child.textContent);
-                  console.log(textContent);
-                  // prevent reading emoji, which cause tts bugs
-                  if (textContent.length != 0)
-                  {
-                    speaker = speaker || " ";
-                    textContent = textContent || " ";
+                    else if (child.className == 'text_cont')
+                    {
+                      var textContent = preprocess_string(child.textContent);
+                      console.log(textContent);
+                      // prevent reading emoji, which cause tts bugs
+                      if (textContent.length != 0)
+                      {
+                        speaker = speaker || " ";
+                        textContent = textContent || " ";
 
-                    chrome.runtime.sendMessage({name: speaker, content: textContent, gift: false}, function(response) {
-                      console.log(response);
-                    });
+                        chrome.runtime.sendMessage({name: speaker, content: textContent, gift: false}, function(response) {
+                          console.log(response);
+                        });
+                      }
+                    }
                   }
                 }
               }
             }
+
 
             if (item.className == 'my_cont')
             {
