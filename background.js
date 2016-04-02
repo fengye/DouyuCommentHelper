@@ -243,7 +243,7 @@ chrome.runtime.onMessage.addListener(
     {
       update_user_activity();
 
-      if (request.name && request.content)
+      if (request.content)
       {
         var sentence;
         if (request.gift)
@@ -300,7 +300,7 @@ chrome.runtime.onMessage.addListener(
         }
         else {
 
-          if (read_name)
+          if (read_name && request.name)
           {
             sentence = mangle_content(request.name) + "说：" + mangle_content(request.content);
           }

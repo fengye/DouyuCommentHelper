@@ -30,12 +30,12 @@ var observer = new MutationObserver(function(mutations, observer) {
           {
             var item = mutation.addedNodes.item(i);
 
-            // check for gift
-            if (item.className == 'jschartli new_bs_li' || item.className == 'jschartli')
+            // check for gift and normal comments
+            if (item.className == 'jschartli' || item.className == 'jschartli new-bs-li' || item.className == 'jschartli chartli')
             {
               // first check if the comments needs to be read out,
               // i.e. class==lw_imgs
-              var found = true;
+              var found = false;
               var j;
               for (j = 0; j < item.childElementCount; ++j)
               {
@@ -46,15 +46,15 @@ var observer = new MutationObserver(function(mutations, observer) {
                   for(k = 0; k < child.childElementCount; ++k)
                   {
                     var grandChild = child.children.item(k);
-                    if (grandChild.nodeName == 'IMG' && grandChild.className == 'lw_imgs')
+                    if (grandChild.nodeName == 'IMG' && grandChild.className == 'lw-imgs')
                     {
                       found = true;
-                      //console.log("FOUND!!!");
+                      console.log("FOUND!!!");
                     }
                     if (grandChild.nodeName == 'IMG' && grandChild.src.indexOf('yw.png') >= 0)
                     {
                       found = true;
-                      // console.log("FOUND type 2!!!");
+                      console.log("FOUND type 2!!!");
                     }
                   }
                 }
@@ -74,7 +74,7 @@ var observer = new MutationObserver(function(mutations, observer) {
                   for(k = 0; k < child.childElementCount; ++k)
                   {
                     var grandChild = child.children.item(k);
-                    if (grandChild.className == 'nick js_nick')
+                    if (grandChild.className == 'nick js-nick')
                     {
                       speaker = grandChild.textContent;
                     }
@@ -94,68 +94,67 @@ var observer = new MutationObserver(function(mutations, observer) {
                       textContent.indexOf('系统广播') < 0)
                   {
 
-                    speaker = speaker || " ";
+                    //speaker = speaker || " ";
                     textContent = textContent || " ";
                     chrome.runtime.sendMessage({name: speaker, content: textContent, gift: true}, function(response) {
                       console.log(response);
                     });
                   }
                 }
-
-
               }
-            }
-
-            if (item.className == 'jschartli chartli')
-            {
-              for(ii = 0; ii < item.childElementCount; ++ii)
+              else
               {
-                var item_ii = item.children.item(ii);
-                
-                // normal and vip user
-                if (item_ii.className == 'text_cont' || item_ii.className == 'text_cont cqback')
+                var ii;
+                for(ii = 0; ii < item.childElementCount; ++ii)
                 {
-                  // find childs with class=name and class=text_cont
-                  for (j = 0; j < item_ii.childElementCount; ++j)
-                  {
-                    var speaker;
+                  var item_ii = item.children.item(ii);
 
-                    var child = item_ii.children.item(j);
-                    if (child.className == 'name')
+                  // normal and vip user
+                  if (item_ii.className == 'text-cont' || item_ii.className == 'text-cont cqback')
+                  {
+                    // find childs with class=name and class=text-cont
+                    for (j = 0; j < item_ii.childElementCount; ++j)
                     {
-                      for (k = 0; k < child.childElementCount; ++k)
+                      var speaker;
+
+                      var child = item_ii.children.item(j);
+                      if (child.className == 'name')
                       {
-                        var grandChild = child.children.item(k);
-                        if (grandChild.className == 'nick js_nick')
+                        for (k = 0; k < child.childElementCount; ++k)
                         {
-                          // omit the last semi colon
-                          speaker = grandChild.textContent;
-                          speaker = speaker.substring(0, speaker.length-1);
+
+                          var grandChild = child.children.item(k);
+                          if (grandChild.className == 'nick js-nick')
+                          {
+                            // omit the last semi colon
+                            speaker = grandChild.textContent;
+                            speaker = speaker.substring(0, speaker.length-1);
+                          }
                         }
                       }
-                    }
-                    else if (child.className == 'text_cont')
-                    {
-                      var textContent = preprocess_string(child.textContent);
-                      console.log(textContent);
-                      // prevent reading emoji, which cause tts bugs
-                      if (textContent.length != 0)
+                      else if (child.className == 'text-cont')
                       {
-                        speaker = speaker || " ";
-                        textContent = textContent || " ";
+                        var textContent = preprocess_string(child.textContent);
+                        console.log(textContent);
+                        // prevent reading emoji, which cause tts bugs
+                        if (textContent.length != 0)
+                        {
+                          //speaker = speaker || " ";
+                          textContent = textContent || " ";
 
-                        chrome.runtime.sendMessage({name: speaker, content: textContent, gift: false}, function(response) {
-                          console.log(response);
-                        });
+                          chrome.runtime.sendMessage({name: speaker, content: textContent, gift: false}, function(response) {
+                            // console.log(response);
+                          });
+                        }
                       }
                     }
                   }
                 }
+
               }
             }
 
-
-            if (item.className == 'my_cont')
+            if (item.className == 'my-cont')
             {
               for (j = 0; j < item.childElementCount; ++j)
               {
@@ -167,7 +166,7 @@ var observer = new MutationObserver(function(mutations, observer) {
                   for (k = 0; k < child.childElementCount; ++k)
                   {
                     var grandChild = child.children.item(k);
-                    if (grandChild.className == 'nick js_nick')
+                    if (grandChild.className == 'nick js-nick')
                     {
                       // omit the last semi colon
                       speaker = grandChild.textContent;
